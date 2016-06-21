@@ -1,0 +1,7 @@
+body {
+	text-align: center;
+}
+@font-face {
+	font-family: 'Flappy_Font';
+	url('flappy_font.ttf') format('truetype');
+}
