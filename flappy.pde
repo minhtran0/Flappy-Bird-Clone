@@ -10,7 +10,12 @@ int birdImgCycle;
 ArrayList jump;
 int land1X, land2X;
 
-int moveBy = 10;
+PVector position;
+PVector velocity;
+PVector acceleration;
+PVector upwardForce;
+
+int moveBy = 6;
 
 int stage = 1;
 
@@ -23,7 +28,7 @@ void setup () {
 	// Load images
 	loadImgs();
 
-	landImg = loadImage(loadImage("assets/images/land.png"));
+	landImg = loadImage("assets/images/land.png");
 	birdImg = new PImage[]{loadImage("assets/sprite-animations/bird1.png"),loadImage("assets/sprite-animations/bird2.png"),
 			loadImage("assets/sprite-animations/bird3.png"),loadImage("assets/sprite-animations/bird4.png")};
 	bgImg = loadImage("assets/images/bg.png");
@@ -36,36 +41,43 @@ void init() {
 	jump = new ArrayList();
 	birdImgCycle = 0;
 	land1X = 0; land2X = width;
+
+	acceleration = new PVector(0, 2);
+	velocity = new PVector(0,0);
+	position = new PVector(birdX, birdY);
+	upwardForce = new PVector(0, -20);
 }
 
 void update() {
-	image(birdImg[birdImgCycle%4], birdX, birdY, int(58 * 3/4), int(41 * 3/4));
+	image(birdImg[birdImgCycle%4], position.x, position.y, int(58 * 3/4), int(41 * 3/4));
 	birdImgCycle++;
 
 	if (jump.size() > 0) {
-		birdY -= 20;
+		acceleration.add(upwardForce);
+		velocity.set(0);
 		jump.remove(0);
 	}
-	else {
-		birdY += 30;
-	}
+	velocity.add(acceleration);
+	position.add(velocity);
 
 	land1X -= moveBy;
 	land2X -= moveBy;
 
 	checkEdges();
+
+	acceleration.set(0, 2);
 }
 
 void checkEdges() {
-	if (birdY > 550) {
-		birdY = 550;
+	if (position.y > 450) {
+		position.y = 450;
 	}
 }
 
 void drawBackground() {
 	image(bgImg, 0,0, width, height);
-	if (land1X == -width)	land1X = width;
-	if (land2X == -width)	land2X = width;
+	if (land1X < -width)	land1X = width-10;
+	if (land2X < -width)	land2X = width-10;
 	image(landImg, land1X, 600 - 160*3/4, 480 * 3/4, 160 * 3/4);
 	image(landImg, land2X, 600 - 160*3/4, 480 * 3/4, 160 * 3/4);
 }
@@ -73,6 +85,7 @@ void drawBackground() {
 void keyPressed() {
 	if (stage == 2) {
 		jump.add(true);
+		console.log("jump");
 	}
 }
 
@@ -93,10 +106,6 @@ void draw() {
 	}
 	else if (stage == 3) {
 	}
-
-	// delay
-	double start = millis();
-	while(millis() - start < 100) {}
 	
 }
 
