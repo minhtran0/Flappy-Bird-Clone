@@ -14,6 +14,7 @@ PVector position;
 PVector velocity;
 PVector acceleration;
 PVector upwardForce;
+int angle;
 
 int moveBy = 6;
 
@@ -46,16 +47,32 @@ void init() {
 	velocity = new PVector(0,0);
 	position = new PVector(birdX, birdY);
 	upwardForce = new PVector(0, -20);
+	angle = 0;
 }
 
 void update() {
-	image(birdImg[birdImgCycle%4], position.x, position.y, int(58 * 3/4), int(41 * 3/4));
 	birdImgCycle++;
 
 	if (jump.size() > 0) {
 		acceleration.add(upwardForce);
 		velocity.set(0);
 		jump.remove(0);
+
+		angle = 2*PI - PI/4;	// 45 degrees
+		pushMatrix();
+			translate(position.x, position.y);
+			rotate(angle);
+			image(birdImg[birdImgCycle%4], 0, 0, int(58 * 3/4), int(41 * 3/4));
+		popMatrix();
+	}
+	else {
+		angle += 3 * PI/180;
+		if (angle > 2*PI + PI/2)	angle = 2*PI + PI/2;
+		pushMatrix();
+			translate(position.x, position.y);
+			rotate(angle);
+			image(birdImg[birdImgCycle%4], 0, 0, int(58 * 3/4), int(41 * 3/4));
+		popMatrix();
 	}
 	velocity.add(acceleration);
 	position.add(velocity);
@@ -69,8 +86,8 @@ void update() {
 }
 
 void checkEdges() {
-	if (position.y > 450) {
-		position.y = 450;
+	if (position.y > 440) {
+		position.y = 440;
 	}
 }
 
