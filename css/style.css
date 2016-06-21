@@ -3,5 +3,5 @@ body {
 }
 @font-face {
 	font-family: 'Flappy_Font';
-	url('flappy_font.ttf') format('truetype');
+	src: url('flappy_font.ttf') format('truetype');
 }

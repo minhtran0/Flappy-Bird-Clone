@@ -15,6 +15,7 @@ int birdImgCycle;
 ArrayList jump;
 int land1X, land2X;
 boolean nextOne;	// true means can add points for passing pipe1
+int[] tl, tr, bl, br;	// Top left, top right, bottom left, bottom right coordinates (for rotation)
 
 PVector position;
 PVector velocity;
@@ -102,6 +103,9 @@ void update() {
 			image(birdImg[birdImgCycle%4], 0, 0, 58*3/4, 41*3/4);
 		popMatrix();
 	}
+
+	rotationCoordinates();
+
 	velocity.add(acceleration);
 	position.add(velocity);
 
@@ -134,31 +138,59 @@ void update() {
 }
 
 void checkCollisions() {
-	if (position.x >= pipe1X && position.x <= pipe1X + 87*3/4 ||
-		position.x + 58*3/4 >= pipe1X && position.x + 58*3/4 <= pipe1X + 87*3/4) {
-		if (position.y + 41*3/4 - 5 >= pipe1Y) {
+	if (tl[0] >= pipe1X &&  tl[0] <= pipe1X + 87*3/4) {
+		if (bl[1] >= pipe1Y) {
 			stage = 3;
 		}
-		if (position.y <= pipe1Y - 135) {
-			stage = 3;
-		}
-	}
-	if (position.x >= pipe2X && position.x <= pipe2X + 87*3/4 ||
-		position.x + 58*3/4 >= pipe2X && position.x + 58*3/4 <= pipe2X + 87*3/4) {
-		if (position.y + 41*3/4 - 5 >= pipe2Y) {
-			stage = 3;
-		}
-		if (position.y <= pipe2Y - 135) {
+		if (tl[1] <= pipe1Y - spacing) {
 			stage = 3;
 		}
 	}
-	if (position.y < -60) {
+	if (tr[0] >= pipe1X && tr[0] <= pipe1X + 87*3/4) {
+		if (br[1] >= pipe1Y) {
+			stage = 3;
+		}
+		if (tr[1] <= pipe1Y - spacing) {
+			stage = 3;
+		}
+	}
+	if (tl[0] >= pipe2X && tl[0] <= pipe2X + 87*3/4) {
+		if (bl[1] >= pipe2Y) {
+			stage = 3;
+		}
+		if (tl[1] <= pipe2Y - spacing) {
+			stage = 3;
+		}
+	}
+	if (tr[0] >= pipe2X && tr[0] <= pipe2X + 87*3/4) {
+		if (br[1] >= pipe2Y) {
+			stage = 3;
+		}
+		if (tr[1] <= pipe2Y - spacing) {
+			stage = 3;
+		}
+	}
+	if (tr[1] < -60) {
 		stage = 3;
 	}
-	if (position.y > 440) {
+	if (br[1] > 460) {
 		position.y = 440;
 		stage = 3;
 	}
+}
+
+void rotationCoordinates() {
+	tl = new int[]{(58*1/8)*cos(angle) - 0*sin(angle), 
+					(58*1/8)*sin(angle) + 0*cos(angle)};
+	tr = new int[]{(58*3/4*4/5)*cos(angle) - 0*sin(angle),
+					 (58*3/4*4/5)*sin(angle) + 0*cos(angle)};
+	bl = new int[]{(58*1/8)*cos(angle) - (41*3/4)*sin(angle),
+					 (58*1/8)*sin(angle) + (41*3/4)*cos(angle)};
+	br = new int[]{(58*3/4*4/5)*cos(angle) - (41*3/4)*sin(angle),
+					 (58*3/4*4/5)*sin(angle) + (41*3/4)*cos(angle)};
+
+	tl[0]+=position.x; tl[1]+=position.y; tr[0]+=position.x; tr[1]+=position.y;
+	bl[0]+=position.x; bl[1]+=position.y; br[0]+=position.x; br[1]+=position.y;
 }
 
 void updateScore() {
@@ -172,9 +204,9 @@ void drawBackground() {
 
 	// Draw pipe
 	image(pipe, pipe1X, pipe1Y, 87*3/4, 532*3/4);
-	image(pipeUp, pipe1X, pipe1Y-532*3/4 - 135, 87*3/4, 532*3/4);
+	image(pipeUp, pipe1X, pipe1Y-532*3/4 - spacing, 87*3/4, 532*3/4);
 	image(pipe, pipe2X, pipe2Y, 87*3/4, 532*3/4);
-	image(pipeUp, pipe2X, pipe2Y-532*3/4 - 135, 87*3/4, 532*3/4);
+	image(pipeUp, pipe2X, pipe2Y-532*3/4 - spacing, 87*3/4, 532*3/4);
 
 	image(landImg, land1X, 600 - 160*3/4, 480*3/4, 160*3/4);
 	image(landImg, land2X, 600 - 160*3/4, 480*3/4, 160*3/4);
@@ -244,6 +276,7 @@ void fallingBird() {
 		rotate(angle);
 		image(birdImg[2], 0, 0, 58*3/4, 41*3/4);
 	popMatrix();
+	rotationCoordinates();
 	acceleration.set(0, 2);
 	velocity.add(acceleration);
 	position.add(velocity);
