@@ -1,19 +1,20 @@
 int width = 360, height = 600;
 int score = 0;
+int highscore = 0;
 int birdX, birdY;
 
 PImage[] birdImg;
-PImage landImg;
-PImage bgImg;
-PImage pipe;
-PImage pipeUp;
+PImage landImg, bgImg, pipe, pipeUp, logo, help, gmOver, dialog, replay;
 PFont flappyfont;
+PImage[] medal;
+
 
 int pipe1X, pipe1Y, pipe2X, pipe2Y;
 
 int birdImgCycle;
 ArrayList jump;
 int land1X, land2X;
+boolean nextOne;	// true means can add points for passing pipe1
 
 PVector position;
 PVector velocity;
@@ -22,6 +23,7 @@ PVector upwardForce;
 int angle;
 
 int moveBy = 6;
+int spacing = 135;
 
 int stage = 1;
 
@@ -42,6 +44,16 @@ void setup () {
 	pipeUp = loadImage("assets/images/pipeUp.png");
 	/* @pjs font="flappy_font.ttf"; */
 	flappyfont = loadFont("flappy_font.ttf");
+	logo = loadImage("assets/images/logo.png");
+	help = loadImage("assets/images/help.png");
+	gmOver = loadImage("assets/images/gmOver.png");
+	dialog = loadImage("assets/images/dialog.png");
+	medal = new PImage[4];
+	medal[0] = loadImage("assets/images/medal1.png");
+	medal[1] = loadImage("assets/images/medal2.png");
+	medal[2] = loadImage("assets/images/medal3.png");
+	medal[3] = loadImage("assets/images/medal5.png");
+	replay = loadImage("assets/images/replay.png");
 }
 
 void init() {
@@ -58,8 +70,12 @@ void init() {
 	upwardForce = new PVector(0, -20);
 	angle = 0;
 
-	pipe1X = 450, pipe1Y = 250;
-	pipe2X = 650, pipe2Y = 200;
+	pipe1X = 450;
+	pipe2X = pipe1X + 250;
+	pipe1Y = int(random() * (450-150)) + 150;
+	pipe2Y = int(random() * (450-150)) + 150;
+	nextOne = true;
+	stage = 1;
 }
 
 void update() {
@@ -96,8 +112,23 @@ void update() {
 
 	pipe1X -= moveBy;
 	pipe2X -= moveBy;
-	if (pipe1X < -87*3/4)	pipe1X = width;
-	if (pipe2X < -87*3/4)	pipe2X = width;
+	if (pipe1X < -87*3/4) {
+		pipe1X = pipe2X + 250;
+		pipe1Y = int(random() * (450-150)) + 150;
+	}
+	if (pipe2X < -87*3/4) {
+		pipe2X = pipe1X + 250;
+		pipe2Y = int(random() * (450-150)) + 150;
+	}
+
+	if (position.x > pipe1X + 87*3/4 && nextOne) {
+		score++;
+		nextOne = false;
+	}
+	if (position.x > pipe2X + 87*3/4 && !nextOne) {
+		score++;
+		nextOne = true;
+	}
 
 	acceleration.set(0, 2);
 }
@@ -108,7 +139,7 @@ void checkCollisions() {
 		if (position.y + 41*3/4>= pipe1Y) {
 			stage = 3;
 		}
-		if (position.y <= pipe1Y - 130) {
+		if (position.y <= pipe1Y - 135) {
 			stage = 3;
 		}
 	}
@@ -117,7 +148,7 @@ void checkCollisions() {
 		if (position.y + 41*3/4 >= pipe2Y) {
 			stage = 3;
 		}
-		if (position.y <= pipe2Y - 130) {
+		if (position.y <= pipe2Y - 135) {
 			stage = 3;
 		}
 	}
@@ -133,7 +164,7 @@ void checkCollisions() {
 void updateScore() {
 	fill(0);
 	textFont(flappyfont, 40);
-	text(score, width/2 - 10, 200);
+	text(score, width/2 - 10, 150);
 }
 
 void drawBackground() {
@@ -141,15 +172,18 @@ void drawBackground() {
 
 	// Draw pipe
 	image(pipe, pipe1X, pipe1Y, 87*3/4, 532*3/4);
-	image(pipeUp, pipe1X, pipe1Y-532*3/4 - 130, 87*3/4, 532*3/4);
+	image(pipeUp, pipe1X, pipe1Y-532*3/4 - 135, 87*3/4, 532*3/4);
 	image(pipe, pipe2X, pipe2Y, 87*3/4, 532*3/4);
-	image(pipeUp, pipe2X, pipe2Y-532*3/4 - 130, 87*3/4, 532*3/4);
+	image(pipeUp, pipe2X, pipe2Y-532*3/4 - 135, 87*3/4, 532*3/4);
 
 	image(landImg, land1X, 600 - 160*3/4, 480*3/4, 160*3/4);
 	image(landImg, land2X, 600 - 160*3/4, 480*3/4, 160*3/4);
 }
 
 void keyPressed() {
+	if (stage == 1) {
+		stage == 2;
+	}
 	if (stage == 2) {
 		jump.add(true);
 	}
@@ -159,10 +193,43 @@ void mouseClicked() {
 	if (stage == 1) {
 		stage = 2;
 	}
-	if (stage == 3) {
-		init();
-		stage = 2;
+	if (stage == 2) {
+		jump.add(true);
 	}
+	if (stage == 3) {
+		if (mouseX >= 110 && mouseX <= 110+197*3/4)
+		if (mouseY >= 350 && mouseY <= 350+120*3/4) {
+			stage = 1;
+		}
+	}
+}
+
+void drawStartScreen() {
+	image(logo, 50, 100, 360*3/4, 120*3/4);
+	image(help, 60, 220, 323*3/4, 185*3/4);
+	image(birdImg[birdImgCycle%4], birdX, birdY, 58*3/4, 41*3/4);
+}
+
+void drawEndScreen() {
+	image(gmOver, 50, 60, 340*3/4, 100*3/4);
+	image(dialog, 30, 170, 393*3/4, 205*3/4);
+	if (score >= 30)
+		image(medal[0], 70, 225, 76*3/4, 76*3/4);
+	else if (score >= 20)
+		image(medal[1], 70, 225, 76*3/4, 76*3/4);
+	else if (score >= 10)
+		image(medal[2], 70, 225, 76*3/4, 76*3/4);
+	else if (score >= 5)
+		image(medal[3], 70, 225, 76*3/4, 76*3/4);
+	fill(0);
+	textFont(flappyfont, 20);
+	text(score, 265, 233);
+
+	if (score > highscore)	highscore = score;
+	text(highscore, 265, 280);
+
+	image(replay, 110, 350, 197*3/4, 120*3/4);
+
 }
 
 void fallingBird() {
@@ -180,11 +247,10 @@ void fallingBird() {
 
 void draw() {
 	drawBackground();
-	console.log(stage);
-	updateScore();
 
 	if (stage == 1) {
 		init();
+		drawStartScreen();
 	}
 	else if (stage == 2) {
 		update();
@@ -193,12 +259,13 @@ void draw() {
 	}
 	else if (stage == 3) {
 		fallingBird();
+		drawEndScreen();
 	}
 	
 }
 
 void loadImgs()  {
-	/* @pjs preload="assets/images/bg.png,assets/images/land.png,assets/sprite-animations/bird1.png,assets/sprite-animations/bird2.png,assets/sprite-animations/bird3.png,assets/sprite-animations/bird4.png,assets/images/pipe.png,assets/images/pipeUp.png"; */
+	/* @pjs preload="assets/images/bg.png,assets/images/land.png,assets/sprite-animations/bird1.png,assets/sprite-animations/bird2.png,assets/sprite-animations/bird3.png,assets/sprite-animations/bird4.png,assets/images/pipe.png,assets/images/pipeUp.png,assets/images/logo.png,assets/images/help.png,assets/images/gmOver.png,assets/images/dialog.png,assets/images/medal1.png,assets/images/medal2.png,assets/images/medal3.png,assets/images/medal5.png,assets/images/replay.png"; */
 
 	/* @pjs font="flappy_font.ttf"; */
 }
