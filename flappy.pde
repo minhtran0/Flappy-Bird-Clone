@@ -7,6 +7,7 @@ PImage landImg;
 PImage bgImg;
 PImage pipe;
 PImage pipeUp;
+PFont flappyfont;
 
 int pipe1X, pipe1Y, pipe2X, pipe2Y;
 
@@ -39,6 +40,8 @@ void setup () {
 	bgImg = loadImage("assets/images/bg.png");
 	pipe = loadImage("assets/images/pipe.png");
 	pipeUp = loadImage("assets/images/pipeUp.png");
+	/* @pjs font="flappy_font.ttf"; */
+	flappyfont = loadFont("flappy_font.ttf");
 }
 
 void init() {
@@ -71,7 +74,7 @@ void update() {
 		pushMatrix();
 			translate(position.x, position.y);
 			rotate(angle);
-			image(birdImg[birdImgCycle%4], 0, 0, int(58 * 3/4), int(41 * 3/4));
+			image(birdImg[birdImgCycle%4], 0, 0, 58*3/4, 41*3/4);
 		popMatrix();
 	}
 	else {
@@ -80,7 +83,7 @@ void update() {
 		pushMatrix();
 			translate(position.x, position.y);
 			rotate(angle);
-			image(birdImg[birdImgCycle%4], 0, 0, int(58 * 3/4), int(41 * 3/4));
+			image(birdImg[birdImgCycle%4], 0, 0, 58*3/4, 41*3/4);
 		popMatrix();
 	}
 	velocity.add(acceleration);
@@ -96,19 +99,41 @@ void update() {
 	if (pipe1X < -87*3/4)	pipe1X = width;
 	if (pipe2X < -87*3/4)	pipe2X = width;
 
-	checkEdges();
-
 	acceleration.set(0, 2);
 }
 
 void checkCollisions() {
-	
-}
-
-void checkEdges() {
+	if (position.x >= pipe1X && position.x <= pipe1X + 87*3/4 ||
+		position.x + 58*3/4 >= pipe1X && position.x + 58*3/4 <= pipe1X + 87*3/4) {
+		if (position.y + 41*3/4>= pipe1Y) {
+			stage = 3;
+		}
+		if (position.y <= pipe1Y - 130) {
+			stage = 3;
+		}
+	}
+	if (position.x >= pipe2X && position.x <= pipe2X + 87*3/4 ||
+		position.x + 58*3/4 >= pipe2X && position.x + 58*3/4 <= pipe2X + 87*3/4) {
+		if (position.y + 41*3/4 >= pipe2Y) {
+			stage = 3;
+		}
+		if (position.y <= pipe2Y - 130) {
+			stage = 3;
+		}
+	}
+	if (position.y < -20) {
+		stage = 3;
+	}
 	if (position.y > 440) {
 		position.y = 440;
+		stage = 3;
 	}
+}
+
+void updateScore() {
+	fill(0);
+	textFont(flappyfont, 40);
+	text(score, width/2 - 10, 200);
 }
 
 void drawBackground() {
@@ -127,7 +152,6 @@ void drawBackground() {
 void keyPressed() {
 	if (stage == 2) {
 		jump.add(true);
-		console.log("jump");
 	}
 }
 
@@ -135,10 +159,29 @@ void mouseClicked() {
 	if (stage == 1) {
 		stage = 2;
 	}
+	if (stage == 3) {
+		init();
+		stage = 2;
+	}
+}
+
+void fallingBird() {
+	angle = 2*PI + PI/2;
+	pushMatrix();
+		translate(position.x, position.y);
+		rotate(angle);
+		image(birdImg[2], 0, 0, 58*3/4, 41*3/4);
+	popMatrix();
+	acceleration.set(0, 2);
+	velocity.add(acceleration);
+	position.add(velocity);
+	checkCollisions();
 }
 
 void draw() {
 	drawBackground();
+	console.log(stage);
+	updateScore();
 
 	if (stage == 1) {
 		init();
@@ -146,12 +189,16 @@ void draw() {
 	else if (stage == 2) {
 		update();
 		checkCollisions();
+		updateScore();
 	}
 	else if (stage == 3) {
+		fallingBird();
 	}
 	
 }
 
 void loadImgs()  {
 	/* @pjs preload="assets/images/bg.png,assets/images/land.png,assets/sprite-animations/bird1.png,assets/sprite-animations/bird2.png,assets/sprite-animations/bird3.png,assets/sprite-animations/bird4.png,assets/images/pipe.png,assets/images/pipeUp.png"; */
+
+	/* @pjs font="flappy_font.ttf"; */
 }
