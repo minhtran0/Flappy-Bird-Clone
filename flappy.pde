@@ -136,7 +136,7 @@ void update() {
 void checkCollisions() {
 	if (position.x >= pipe1X && position.x <= pipe1X + 87*3/4 ||
 		position.x + 58*3/4 >= pipe1X && position.x + 58*3/4 <= pipe1X + 87*3/4) {
-		if (position.y + 41*3/4>= pipe1Y) {
+		if (position.y + 41*3/4 - 5 >= pipe1Y) {
 			stage = 3;
 		}
 		if (position.y <= pipe1Y - 135) {
@@ -145,14 +145,14 @@ void checkCollisions() {
 	}
 	if (position.x >= pipe2X && position.x <= pipe2X + 87*3/4 ||
 		position.x + 58*3/4 >= pipe2X && position.x + 58*3/4 <= pipe2X + 87*3/4) {
-		if (position.y + 41*3/4 >= pipe2Y) {
+		if (position.y + 41*3/4 - 5 >= pipe2Y) {
 			stage = 3;
 		}
 		if (position.y <= pipe2Y - 135) {
 			stage = 3;
 		}
 	}
-	if (position.y < -20) {
+	if (position.y < -60) {
 		stage = 3;
 	}
 	if (position.y > 440) {
@@ -225,8 +225,13 @@ void drawEndScreen() {
 	textFont(flappyfont, 20);
 	text(score, 265, 233);
 
-	if (score > highscore)	highscore = score;
+	if (score > highscore) {
+		highscore = score;
+		getValue(highscore);
+	}
 	text(highscore, 265, 280);
+	textFont(flappyfont, 14);
+	text("Clone by Minh Tran", 10, height-10);
 
 	image(replay, 110, 350, 197*3/4, 120*3/4);
 
