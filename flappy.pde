@@ -4,7 +4,7 @@ int highscore = 0;
 int birdX, birdY;
 
 PImage[] birdImg;
-PImage landImg, bgImg, pipe, pipeUp, logo, help, gmOver, dialog, replay;
+PImage landImg, bgImg, pipe, pipeUp, logo, help, gmOver, dialog, replay, leaderboard;
 PFont flappyfont;
 PImage[] medal;
 
@@ -55,7 +55,18 @@ void setup () {
 	medal[2] = loadImage("assets/images/medal3.png");
 	medal[3] = loadImage("assets/images/medal5.png");
 	replay = loadImage("assets/images/replay.png");
+	leaderboard = loadImage("assets/images/standingsBtn.png");
 }
+
+interface JavaScript {
+	void getValue(int s);
+}
+
+JavaScript javascript;
+void bindJavascript(JavaScript js) {
+	javascript = js;
+}
+
 
 void init() {
 	score = 0;
@@ -233,6 +244,13 @@ void mouseClicked() {
 		if (mouseY >= 350 && mouseY <= 350+120*3/4) {
 			stage = 1;
 		}
+		if (mouseX >= 110 && mouseX <= 110+199*3/4) 
+		if (mouseY >= 440 && mouseY <= 440+120*3/4) {
+			if (javascript != null) {
+				javascript.getValue(highscore);
+				highscore = 0;
+			}
+		}
 	}
 }
 
@@ -245,27 +263,27 @@ void drawStartScreen() {
 void drawEndScreen() {
 	image(gmOver, 50, 60, 340*3/4, 100*3/4);
 	image(dialog, 30, 170, 393*3/4, 205*3/4);
-	if (score >= 30)
-		image(medal[0], 70, 225, 76*3/4, 76*3/4);
+	if (score >= 40)
+		image(medal[3], 70, 225, 76*3/4, 76*3/4);
+	else if (score >= 30)
+		image(medal[2], 70, 225, 76*3/4, 76*3/4);
 	else if (score >= 20)
 		image(medal[1], 70, 225, 76*3/4, 76*3/4);
 	else if (score >= 10)
-		image(medal[2], 70, 225, 76*3/4, 76*3/4);
-	else if (score >= 5)
-		image(medal[3], 70, 225, 76*3/4, 76*3/4);
+		image(medal[0], 70, 225, 76*3/4, 76*3/4);
 	fill(0);
 	textFont(flappyfont, 20);
 	text(score, 265, 233);
 
 	if (score > highscore) {
 		highscore = score;
-		getValue(highscore);
 	}
 	text(highscore, 265, 280);
 	textFont(flappyfont, 14);
 	text("Clone by Minh Tran", 10, height-10);
 
 	image(replay, 110, 350, 197*3/4, 120*3/4);
+	image(leaderboard, 110, 440, 199*3/4, 120*3/4);
 
 }
 
@@ -303,7 +321,7 @@ void draw() {
 }
 
 void loadImgs()  {
-	/* @pjs preload="assets/images/bg.png,assets/images/land.png,assets/sprite-animations/bird1.png,assets/sprite-animations/bird2.png,assets/sprite-animations/bird3.png,assets/sprite-animations/bird4.png,assets/images/pipe.png,assets/images/pipeUp.png,assets/images/logo.png,assets/images/help.png,assets/images/gmOver.png,assets/images/dialog.png,assets/images/medal1.png,assets/images/medal2.png,assets/images/medal3.png,assets/images/medal5.png,assets/images/replay.png"; */
+	/* @pjs preload="assets/images/bg.png,assets/images/land.png,assets/sprite-animations/bird1.png,assets/sprite-animations/bird2.png,assets/sprite-animations/bird3.png,assets/sprite-animations/bird4.png,assets/images/pipe.png,assets/images/pipeUp.png,assets/images/logo.png,assets/images/help.png,assets/images/gmOver.png,assets/images/dialog.png,assets/images/medal1.png,assets/images/medal2.png,assets/images/medal3.png,assets/images/medal5.png,assets/images/replay.png,assets/images/standingsBtn.png"; */
 
 	/* @pjs font="flappy_font.ttf"; */
 }

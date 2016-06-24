@@ -6,9 +6,9 @@
 <head>
 	<meta charset="ISO-8859-1">
 	<title>Flappy Bird</title>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.16/processing.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
@@ -30,32 +30,58 @@
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-		        <li class="active"><a href="http://minhtran.comuf.com/flappybird">Flappy Bird Game <span class="sr-only">(current)</span></a></li>
-		        <li><a href="#">Leaderboard</a></li>
-		      </ul>
-		      <ul class="nav navbar-nav navbar-right">
-		        <li><a href="#">Link</a></li>
-		        <li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-		          <ul class="dropdown-menu">
-		            <li><a href="#">Action</a></li>
-		            <li><a href="#">Another action</a></li>
-		            <li><a href="#">Something else here</a></li>
-		            <li role="separator" class="divider"></li>
-		            <li><a href="#">Separated link</a></li>
-		          </ul>
-		        </li>
+		        <li class="active"><a href="http://minhtran.comuf.com/flappybird">Flappy Bird Online <span class="sr-only">(current)</span></a></li>
+		        <li><a href="http://minhtran.comuf.com/flappybird/leaderboard.php">Leaderboard</a></li>
 		      </ul>
 		    </div><!-- /.navbar-collapse -->
 		  </div><!-- /.container-fluid -->
 		</nav>
 
-		<div class="panel panel-default">
-  		<div class="panel-body">
+		<div class="row">
+		<div class="page-header">
+			<h2>Flappy Bird Online <small>Clone of the popular iOS game</small></h2>
+		</div>
+		</div>
+
+		<div class="row">
+		<div class="well">
 			<canvas id="game_canvas" data-processing-sources="flappy.pde"></canvas>
 		</div>
 		</div>
-		<script type="text/javascript" src="js/main.js"></script>
+		<script type="text/javascript">
+
+			var bound = false;
+		  
+		    function bindJavascript() {
+		     var pjs = Processing.getInstanceById('game_canvas');
+		      if(pjs!=null) {
+		        pjs.bindJavascript(this);
+		        bound = true;
+		      }
+		      if(!bound) setTimeout(bindJavascript, 250);
+		   }
+		 
+		   bindJavascript();
+
+		   function getValue(v) {
+				console.log(v);				
+				$.ajax({
+			      url: 'http://minhtran.comuf.com/flappybird/submit.php',
+			      type: 'POST',
+			      data: {'score': v},
+			      success: function() {
+			        location.href = "http://minhtran.comuf.com/flappybird/submit.php";
+			      },
+			      error: function(xhr, desc, err) {
+			        console.log(xhr);
+			        console.log("Details: " + desc + "\nError:" + err);
+			      }
+			    }); // end ajax call
+				//$.post('http://minhtran.comuf.com/flappybird/submit.php', {score: variableToSend});
+				//location.href = "http://minhtran.comuf.com/flappybird/submit.php";
+			}
+		</script>
+
 	</div>
 </body>
 </html>
