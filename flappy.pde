@@ -82,10 +82,10 @@ void init() {
 	upwardForce = new PVector(0, -20);
 	angle = 0;
 
-	pipe1X = 450;
+	pipe1X = 420;
 	pipe2X = pipe1X + 250;
-	pipe1Y = int(random() * (450-150)) + 150;
-	pipe2Y = int(random() * (450-150)) + 150;
+	pipe1Y = int(random() * (420-150)) + 150;
+	pipe2Y = int(random() * (420-150)) + 150;
 	nextOne = true;
 	stage = 1;
 }
@@ -129,11 +129,11 @@ void update() {
 	pipe2X -= moveBy;
 	if (pipe1X < -87*3/4) {
 		pipe1X = pipe2X + 250;
-		pipe1Y = int(random() * (450-150)) + 150;
+		pipe1Y = int(random() * (420-150)) + 150;
 	}
 	if (pipe2X < -87*3/4) {
 		pipe2X = pipe1X + 250;
-		pipe2Y = int(random() * (450-150)) + 150;
+		pipe2Y = int(random() * (420-150)) + 150;
 	}
 
 	if (position.x > pipe1X + 87*3/4 && nextOne) {
@@ -184,8 +184,9 @@ void checkCollisions() {
 	if (tr[1] < -60) {
 		stage = 3;
 	}
-	if (br[1] > 460) {
+	if (br[1] > 485) {
 		position.y = 440;
+		velocity.set(0,0);
 		stage = 3;
 	}
 }
@@ -232,6 +233,8 @@ void keyPressed() {
 	}
 }
 
+boolean clientSend = false;
+
 void mouseClicked() {
 	if (stage == 1) {
 		stage = 2;
@@ -247,11 +250,24 @@ void mouseClicked() {
 		if (mouseX >= 110 && mouseX <= 110+199*3/4) 
 		if (mouseY >= 440 && mouseY <= 440+120*3/4) {
 			if (javascript != null) {
+				clientSend = true;
+				tellClientScoreSubmit();
 				javascript.getValue(highscore);
 				highscore = 0;
 			}
 		}
 	}
+}
+
+void tellClientScoreSubmit() {
+	stroke(96, 42, 94, 255 * 9/10);
+	strokeWeight(10);
+	fill(29, 21, 78, 255 * 9/10);
+	rect(30, 170, 393*3/4, 205);
+	fill(243, 134, 48);
+	textFont("sans-serif", 32);
+	text("Sending score", 70, 250);
+	text("to server...", 70, 290);
 }
 
 void drawStartScreen() {
@@ -283,7 +299,12 @@ void drawEndScreen() {
 	text("Clone by Minh Tran", 10, height-10);
 
 	image(replay, 110, 350, 197*3/4, 120*3/4);
-	image(leaderboard, 110, 440, 199*3/4, 120*3/4);
+	if (highscore > 0)
+		image(leaderboard, 110, 440, 199*3/4, 120*3/4);
+
+	if (clientSend) {
+		tellClientScoreSubmit();
+	}
 
 }
 
@@ -295,10 +316,12 @@ void fallingBird() {
 		image(birdImg[2], 0, 0, 58*3/4, 41*3/4);
 	popMatrix();
 	rotationCoordinates();
-	acceleration.set(0, 2);
-	velocity.add(acceleration);
-	position.add(velocity);
-	checkCollisions();
+	if (position.y < 440) {
+		acceleration.set(0, 2);
+		velocity.add(acceleration);
+		position.add(velocity);
+		checkCollisions();
+	}
 }
 
 void draw() {

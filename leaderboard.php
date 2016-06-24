@@ -104,17 +104,13 @@
 			<div class="col-md-3"></div>
 		</div>
 		<div class="row" id="page">
-			<div class="btn-group" role="group" aria-label="...">
+			<div class="btn-group" id="prevpage" role="group" aria-label="...">
 			<button type="button" class="btn btn-default">&lt</button>
-			<button type="button" class="btn btn-default">1</button>
-  			<button type="button" class="btn btn-default">&gt</button>
+			<button type="button" id="page" class="btn btn-default">1</button>
+  			<button type="button" id="nextpage" class="btn btn-default">&gt</button>
 			</div>
 		</div>
 		</div>
-
-		
-
-		<script type="text/javascript" src="js/main.js"></script>
 	</div>
 </body>
 </html>

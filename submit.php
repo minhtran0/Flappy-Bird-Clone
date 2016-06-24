@@ -6,6 +6,8 @@
 	$password = '';
 	$database = '';
 
+	global $nameErr;
+
 	$connection = @mysqli_connect($host, $username, $password, $database);
 	if (!$connection) {
 		echo "Error: Unable to connect to MySQL." . PHP_EOL;
@@ -25,7 +27,13 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
     $score = $_SESSION['score'];
 
     //initialize variables for form validation
-    $success = true;
+    if (!preg_match('/^[a-zA-Z0-9@_]*$/', $name) || preg_match('/\S/', $name)) {
+    	$success = false;
+        $nameErr = "Only alphanumeric characters and '_' are allowed";
+    } else {
+        $success = true;
+        $nameErr = "";
+    }
  
     if($success)
     {
@@ -108,9 +116,21 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
 			  <div class="form-group">
 			    <label for="inputName3" class="col-sm-4 control-label">Name</label>
 			    <div class="col-sm-4">
-			      <input type="name" class="form-control" id="inputName3" placeholder="Name" name="name" value="<?php echo $name; ?>" method="post">
+			      <input type="name" class="form-control" id="inputName3" placeholder="Name" name="name" method="post">
 			    </div>
 			  </div>
+			  <?php
+			  	//if (!empty($nameErr)) {
+			  		echo "<div class=\"form-group\">";
+			  		echo "<div class=\"alert alert-danger col-smo-offset-3 col-md-4\" role=\"alert\">";
+					echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+					echo "<span class=\"sr-only\">Error:</span>";
+					echo "$nameErr";
+					echo "</div>";
+					echo "</div>";
+			  	//}
+
+			  ?>
 			  <div class="form-group">
 			    <div class="col-sm-offset-3 col-sm-6">
 			      <button type="submit" class="btn btn-primary" value="submit" name="submit-form" method="post">Submit</button>
@@ -121,4 +141,4 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
 		</div>
 	</div>
 </body>
-</html>
+</html>	
