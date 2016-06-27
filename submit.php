@@ -6,8 +6,6 @@
 	$password = '';
 	$database = '';
 
-	global $nameErr;
-
 	$connection = @mysqli_connect($host, $username, $password, $database);
 	if (!$connection) {
 		echo "Error: Unable to connect to MySQL." . PHP_EOL;
@@ -18,6 +16,14 @@
 	if (isset($_POST['score'])) {
 		$_SESSION['score'] = $_POST['score'];
 	}
+
+	unset($_SESSION['nameErr']);
+
+	if (!isset($_SESSION['score'])) {
+		$success = false;
+		$nameErr = " No score to submit";
+		$_SESSION['nameErr'] = $nameErr;
+	}
 	
  //check to see that the form has been submitted
 if(isset($_POST['submit-form']) && isset($_SESSION['score'])) { 
@@ -27,12 +33,24 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
     $score = $_SESSION['score'];
 
     //initialize variables for form validation
-    if (!preg_match('/^[a-zA-Z0-9@_]*$/', $name) || preg_match('/\S/', $name)) {
+    if (!preg_match('/^[A-Za-z0-9_]+$/', $name)) {
     	$success = false;
-        $nameErr = "Only alphanumeric characters and '_' are allowed";
-    } else {
+        $nameErr = " Only alphanumeric characters and '_' are allowed";
+        $_SESSION['nameErr'] = $nameErr;
+    } 
+    else if (strlen($name) > 10) {
+    	$success = false;
+    	$nameErr = " Maximum 10 characters";
+    	$_SESSION['nameErr'] = $nameErr;
+    }
+    elseif (strlen($name) == 0) {
+    	$success = false;
+    	$nameErr = " Name cannot be blank";
+    	$_SESSION['nameErr'] = $nameErr;
+    }
+    else {
         $success = true;
-        $nameErr = "";
+        unset($_SESSION['nameErr']);
     }
  
     if($success)
@@ -45,6 +63,8 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
         if(! $result ) {
       		die('Could not enter data!!! ' . @mysql_error());
   		}
+
+  		$_SESSION['name'] = $name;
 
         //redirect them to a welcome page
         header("Location: http://minhtran.comuf.com/flappybird/leaderboard.php");
@@ -120,15 +140,17 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
 			    </div>
 			  </div>
 			  <?php
-			  	//if (!empty($nameErr)) {
-			  		echo "<div class=\"form-group\">";
-			  		echo "<div class=\"alert alert-danger col-smo-offset-3 col-md-4\" role=\"alert\">";
-					echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
-					echo "<span class=\"sr-only\">Error:</span>";
-					echo "$nameErr";
-					echo "</div>";
-					echo "</div>";
-			  	//}
+			  	if (isset($_SESSION['nameErr'])) {
+			  		echo "\t\t\t<div class=\"form-group\">";
+			  		echo "\t\t\t<label for=\"inputName3\" class=\"col-sm-4 control-label\"></label>";
+			  		echo "\t\t\t\t<div class=\"alert alert-danger col-md-4\" role=\"alert\">";
+					echo "\t\t\t\t\t<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+					echo "\t\t\t\t\t<span class=\"sr-only\">Error:</span>";
+					echo "\t\t\t\t\t" . $_SESSION['nameErr'];
+					echo "\t\t\t\t</div>";
+					echo "\t\t\t</div>";
+					unset($_SESSION['nameErr']);
+			  	}
 
 			  ?>
 			  <div class="form-group">

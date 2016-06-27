@@ -43,7 +43,6 @@ void setup () {
 	bgImg = loadImage("assets/images/bg.png");
 	pipe = loadImage("assets/images/pipe.png");
 	pipeUp = loadImage("assets/images/pipeUp.png");
-	/* @pjs font="flappy_font.ttf"; */
 	flappyfont = loadFont("flappy_font.ttf");
 	logo = loadImage("assets/images/logo.png");
 	help = loadImage("assets/images/help.png");
@@ -56,17 +55,9 @@ void setup () {
 	medal[3] = loadImage("assets/images/medal5.png");
 	replay = loadImage("assets/images/replay.png");
 	leaderboard = loadImage("assets/images/standingsBtn.png");
-}
 
-interface JavaScript {
-	void getValue(int s);
+	init();
 }
-
-JavaScript javascript;
-void bindJavascript(JavaScript js) {
-	javascript = js;
-}
-
 
 void init() {
 	score = 0;
@@ -245,16 +236,15 @@ void mouseClicked() {
 	if (stage == 3) {
 		if (mouseX >= 110 && mouseX <= 110+197*3/4)
 		if (mouseY >= 350 && mouseY <= 350+120*3/4) {
+			init();
 			stage = 1;
 		}
 		if (mouseX >= 110 && mouseX <= 110+199*3/4) 
 		if (mouseY >= 440 && mouseY <= 440+120*3/4) {
-			if (javascript != null) {
-				clientSend = true;
-				tellClientScoreSubmit();
-				javascript.getValue(highscore);
-				highscore = 0;
-			}
+			clientSend = true;
+			tellClientScoreSubmit();
+			getValue(highscore);
+			highscore = 0;
 		}
 	}
 }
@@ -270,9 +260,15 @@ void tellClientScoreSubmit() {
 	text("to server...", 70, 290);
 }
 
+int[] helpYCycle = new int[]{0, 5};
+int helpYCounter = 0;
 void drawStartScreen() {
 	image(logo, 50, 100, 360*3/4, 120*3/4);
-	image(help, 60, 220, 323*3/4, 185*3/4);
+	image(help, 60, 220 + helpYCycle[helpYCounter%2], 323*3/4, 185*3/4);
+	helpYCounter++;
+	// delay 50 ms
+	int start = millis();
+	while (millis() - start < 100) {}
 	image(birdImg[birdImgCycle%4], birdX, birdY, 58*3/4, 41*3/4);
 }
 
@@ -328,7 +324,6 @@ void draw() {
 	drawBackground();
 
 	if (stage == 1) {
-		init();
 		drawStartScreen();
 	}
 	else if (stage == 2) {

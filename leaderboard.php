@@ -57,6 +57,49 @@
 		<div class="row">
 			<h3 id="h3obj">Top Scores Overall</h3>
 		</div>
+		<?php
+
+			session_save_path('');
+			session_start();
+
+			if (isset($_SESSION['name'])) {
+
+				// Log into database
+				$host = '';
+				$username = '';
+				$password = '';
+				$database = '';
+
+				$connection = @mysqli_connect($host, $username, $password, $database);
+				if (!$connection) {
+			    	echo "Error: Unable to connect to MySQL." . PHP_EOL;
+					echo "Debugging errno: " . @mysqli_connect_error() . PHP_EOL;
+					echo "Debugging error: " . @mysqli_connect_error() . PHP_EOL;
+					exit;
+				}
+
+				$query = "SELECT * FROM flappybird_leaderboard ORDER BY score DESC, id ASC";
+				$rank = 1;
+
+				$data = @mysqli_query($connection, $query);
+
+				while ($row = @mysqli_fetch_assoc($data)) {
+					if ($row['name'] == $_SESSION['name']) {
+						break;
+					}
+					$rank++;
+				}
+				$_SESSION['rank'] = $rank;
+
+				echo "<div class=\"row\">\n";
+				echo "<h4>'<strong>". $_SESSION['name'] . "</strong>' is ranked <strong>$rank" . "th</strong></h4>\n";
+				echo "</div>\n";
+
+				unset($_SESSION['name']);
+				@mysqli_close($connection);
+			}
+
+		?>
 		<div class="row">
 			<div class="col-md-3"></div>
 			<div class="col-md-6">
@@ -77,23 +120,40 @@
 				  	$connection = @mysqli_connect($host, $username, $password, $database);
 				  	if (!$connection) {
 					    echo "Error: Unable to connect to MySQL." . PHP_EOL;
-					    echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
-					    echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
+					    echo "Debugging errno: " . @mysqli_connect_error() . PHP_EOL;
+					    echo "Debugging error: " . @mysqli_connect_error() . PHP_EOL;
 					    exit;
 					}
 
-				  	$query = "SELECT name, score FROM flappybird_leaderboard ORDER BY score DESC LIMIT 100";
+				  	$query = "SELECT name, score FROM flappybird_leaderboard ORDER BY score DESC, id ASC LIMIT 100";
 				  	$result = @mysqli_query($connection, $query);
 				  	$rank = 1;
 
-			        while($row = @mysqli_fetch_assoc($result)) {
-			        	echo "<tr>\n";
-			        	echo "<td>" . $rank . "</td>\n";
-			        	echo "<td>" . $row['name'] . "</td>\n";
-			        	echo "<td>" . $row['score'] . "</td>\n";
-			        	echo "</tr>\n";
-			        	$rank++;
+			        while($row = @mysqli_fetch_assoc($result)) { 
+			        	if (isset($_SESSION['rank']) &&$_SESSION['rank'] == $rank) {
+				        	echo "\t\t\t\t<tr>\n";
+				        	echo "\t\t\t\t\t<td class=\"bg-success\">" . $rank . "</td>\n";
+				        	if ($rank <= 10)
+				        		echo "\t\t\t\t\t<td class=\"bg-success\">" . $row['name'] . "</strong></td>\n";
+				        	else
+				        		echo "\t\t\t\t\t<td class=\"bg-success\">" . $row['name'] . "</td>\n";
+				        	echo "\t\t\t\t\t<td class=\"bg-success\">" . $row['score'] . "</td>\n";
+				        	echo "\t\t\t\t</tr>\n";
+				        	$rank++;
+			        	}
+			        	else {
+			        		echo "\t\t\t\t<tr>\n";
+				        	echo "\t\t\t\t\t<td>" . $rank . "</td>\n";
+				        	if ($rank <= 10)
+				        		echo "\t\t\t\t\t<td><strong>" . $row['name'] . "</strong></td>\n";
+				        	else
+				        		echo "\t\t\t\t\t<td>" . $row['name'] . "</td>\n";
+				        	echo "\t\t\t\t\t<td>" . $row['score'] . "</td>\n";
+				        	echo "\t\t\t\t</tr>\n";
+				        	$rank++;
+			        	}
 			        }
+			        unset($_SESSION['rank']);
 
 			        @mysqli_close($connection);
 			    ?>

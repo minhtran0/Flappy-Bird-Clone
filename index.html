@@ -49,20 +49,6 @@
 		</div>
 		</div>
 		<script type="text/javascript">
-
-			var bound = false;
-		  
-		    function bindJavascript() {
-		     var pjs = Processing.getInstanceById('game_canvas');
-		      if(pjs!=null) {
-		        pjs.bindJavascript(this);
-		        bound = true;
-		      }
-		      if(!bound) setTimeout(bindJavascript, 250);
-		   }
-		 
-		   bindJavascript();
-
 		   function getValue(v) {
 				console.log(v);				
 				$.ajax({
