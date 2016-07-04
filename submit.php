@@ -67,7 +67,7 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
   		$_SESSION['name'] = $name;
 
         //redirect them to a welcome page
-        header("Location: http://minhtran.comuf.com/flappybird/leaderboard.php");
+        header("Location: leaderboard.php");
  
     }
 
@@ -107,14 +107,14 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="http://minhtran.comuf.com">Home</a>
+		      <a class="navbar-brand" href="index.html">Home</a>
 		    </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-		        <li><a href="http://minhtran.comuf.com/flappybird">Flappy Bird Online</a></li>
-		        <li><a href="http://minhtran.comuf.com/flappybird/leaderboard.php">Leaderboard</a></li>
+		        <li><a href="index.html">Flappy Bird Online</a></li>
+		        <li><a href="leaderboard.php">Leaderboard</a></li>
 		      </ul>
 		    </div><!-- /.navbar-collapse -->
 		  </div><!-- /.container-fluid -->

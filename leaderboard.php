@@ -32,14 +32,14 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="http://minhtran.comuf.com">Home</a>
+		      <a class="navbar-brand" href="index.html">Home</a>
 		    </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-		        <li><a href="http://minhtran.comuf.com/flappybird">Flappy Bird Online</a></li>
-		        <li class="active"><a href="http://minhtran.comuf.com/flappybird/leaderboard.php">Leaderboard<span class="sr-only">(current)</span></a></li>
+		        <li><a href="index.html">Flappy Bird Online</a></li>
+		        <li class="active"><a href="leaderboard.php">Leaderboard<span class="sr-only">(current)</span></a></li>
 		      </ul>
 		      
 		    </div><!-- /.navbar-collapse -->
