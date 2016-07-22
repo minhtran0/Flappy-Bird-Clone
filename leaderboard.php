@@ -1,5 +1,8 @@
-<!-- Flappy Bird -->
+<?php 
 
+	include_once "global.php";
+
+?>
 <html>
 <head>
 	<meta charset="ISO-8859-1">
@@ -32,13 +35,12 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="index.html">Home</a>
 		    </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-		        <li><a href="index.html">Flappy Bird Online</a></li>
+		        <li><a href="index.php">Flappy Bird Online</a></li>
 		        <li class="active"><a href="leaderboard.php">Leaderboard<span class="sr-only">(current)</span></a></li>
 		      </ul>
 		      
@@ -59,31 +61,13 @@
 		</div>
 		<?php
 
-			session_save_path('');
-			session_start();
-
 			if (isset($_SESSION['name'])) {
-
-				// Log into database
-				$host = '';
-				$username = '';
-				$password = '';
-				$database = '';
-
-				$connection = @mysqli_connect($host, $username, $password, $database);
-				if (!$connection) {
-			    	echo "Error: Unable to connect to MySQL." . PHP_EOL;
-					echo "Debugging errno: " . @mysqli_connect_error() . PHP_EOL;
-					echo "Debugging error: " . @mysqli_connect_error() . PHP_EOL;
-					exit;
-				}
-
 				$query = "SELECT * FROM flappybird_leaderboard ORDER BY score DESC, id ASC";
 				$rank = 1;
 
-				$data = @mysqli_query($connection, $query);
+				$data = $conn->query($query);
 
-				while ($row = @mysqli_fetch_assoc($data)) {
+				while ($row = $data->fetch_assoc()) {
 					if ($row['name'] == $_SESSION['name']) {
 						break;
 					}
@@ -96,7 +80,6 @@
 				echo "</div>\n";
 
 				unset($_SESSION['name']);
-				@mysqli_close($connection);
 			}
 
 		?>
@@ -112,24 +95,11 @@
 				
 				  <?php
 
-				  	$host = '';
-				  	$username = '';
-				  	$password = '';
-				  	$database = '';
-
-				  	$connection = @mysqli_connect($host, $username, $password, $database);
-				  	if (!$connection) {
-					    echo "Error: Unable to connect to MySQL." . PHP_EOL;
-					    echo "Debugging errno: " . @mysqli_connect_error() . PHP_EOL;
-					    echo "Debugging error: " . @mysqli_connect_error() . PHP_EOL;
-					    exit;
-					}
-
 				  	$query = "SELECT name, score FROM flappybird_leaderboard ORDER BY score DESC, id ASC LIMIT 100";
-				  	$result = @mysqli_query($connection, $query);
+				  	$result = $conn->query($query);
 				  	$rank = 1;
 
-			        while($row = @mysqli_fetch_assoc($result)) { 
+			        while($row = $result->fetch_assoc()) { 
 			        	if (isset($_SESSION['rank']) &&$_SESSION['rank'] == $rank) {
 				        	echo "\t\t\t\t<tr>\n";
 				        	echo "\t\t\t\t\t<td class=\"bg-success\">" . $rank . "</td>\n";
@@ -155,20 +125,13 @@
 			        }
 			        unset($_SESSION['rank']);
 
-			        @mysqli_close($connection);
+			        $conn->close();
 			    ?>
 
 
 			</table>
 			</div>
 			<div class="col-md-3"></div>
-		</div>
-		<div class="row" id="page">
-			<div class="btn-group" id="prevpage" role="group" aria-label="...">
-			<button type="button" class="btn btn-default">&lt</button>
-			<button type="button" id="page" class="btn btn-default">1</button>
-  			<button type="button" id="nextpage" class="btn btn-default">&gt</button>
-			</div>
 		</div>
 		</div>
 	</div>

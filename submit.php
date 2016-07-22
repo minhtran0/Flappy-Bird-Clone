@@ -1,18 +1,7 @@
 <?php
-	session_save_path('');
-	session_start();
-	$host = '';
-	$username = '';
-	$password = '';
-	$database = '';
 
-	$connection = @mysqli_connect($host, $username, $password, $database);
-	if (!$connection) {
-		echo "Error: Unable to connect to MySQL." . PHP_EOL;
-		echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
-		echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
-		exit;
-	}
+	include_once "global.php";
+
 	if (isset($_POST['score'])) {
 		$_SESSION['score'] = $_POST['score'];
 	}
@@ -57,12 +46,8 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
     {
         $query = "INSERT INTO flappybird_leaderboard (name,score) VALUES ('$name', '$score')";
 
-        $result = @mysqli_query($connection, $query);
+        $result = $conn->query($query);
         unset($_SESSION['score']);
-
-        if(! $result ) {
-      		die('Could not enter data!!! ' . @mysql_error());
-  		}
 
   		$_SESSION['name'] = $name;
 
@@ -71,7 +56,7 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
  
     }
 
-    @mysqli_close();
+    $conn->close();
 
 }
 
@@ -107,13 +92,12 @@ if(isset($_POST['submit-form']) && isset($_SESSION['score'])) {
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="index.html">Home</a>
 		    </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-		        <li><a href="index.html">Flappy Bird Online</a></li>
+		        <li><a href="index.php">Flappy Bird Online</a></li>
 		        <li><a href="leaderboard.php">Leaderboard</a></li>
 		      </ul>
 		    </div><!-- /.navbar-collapse -->
